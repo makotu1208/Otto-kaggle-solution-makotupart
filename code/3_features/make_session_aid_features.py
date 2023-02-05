@@ -743,12 +743,10 @@ def main(train_test_path, train_validation_path, output_path):
         session_action_feature(prefix, train, output_path)
 
 
-train_test_path = '../../data/raw_opt/'
-train_validation_path = '../../data/val_radek/'
-output_path = '../../github/data/feature/'
+raw_opt_path = '../../input/train_test/'
+preprocess_path = '../../input/train_valid/'
+output_path = '../../input/feature/'
 
-main(train_test_path, train_validation_path, output_path)
-
-
+main(raw_opt_path, preprocess_path, output_path)
 
 

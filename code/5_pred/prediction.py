@@ -285,22 +285,18 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
     pred_all.to_parquet(f'{output_path}{type_name}_test_makotu_v3.parquet')
 
 # +
-candidate_path = '../../github/data/feature_used/'
-datamart_path ='../../github/data/feature_used/'
-oof_read_path = '../../data/share_v3/'
-output_path = '../../data/sub/'
-feature_dict_path = '../config/feature_config.yaml'
-co_matrix_dict_path = '../config/co_matrix_config.yaml'
-oof_dict_path = '../config/oof_config.yaml'
+candidate_path = '../../input/candidate/'
+datamart_path ='../../input/feature/'
+oof_read_path = '../../input/oof/'
+output_path = '../../output/'
+model_path = '../../model/'
+feature_dict_path = '../../config/feature_config.yaml'
+co_matrix_dict_path = '../../config/co_matrix_config.yaml'
+oof_dict_path = '../../config/oof_config.yaml'
 
-#model_path = f'../../../model/catboost/202301292313/' # click
-#model_path = f'../../../model/catboost/202301300845/' # click_all
-#model_path = f'../../../model/catboost/202301302112/' # cart
-#model_path = f'../../../model/catboost/202301310035/' # order
-# -
 
 for t in ['click', 'click_all', 'cart', 'order']:
-    main(t, '../../model/catboost/202301310035/', candidate_path, datamart_path, oof_read_path, output_path,
+    main(t, model_path + t, candidate_path, datamart_path, oof_read_path, output_path,
          feature_dict_path, co_matrix_dict_path, oof_dict_path)
 
 

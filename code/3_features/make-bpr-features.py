@@ -64,9 +64,9 @@ def main(bpr_path, candidate_path, datamart_path):
             train_sample.to_parquet(f'{datamart_path}{prefix}{type_name}_bpr_feature.parquet')
 
 
-candidate_path = '../../github/data/feature_used/'
-datamart_path = '../../output_intermediate/data/feature/'
-bpr_path = '../../data/BPR/'
+candidate_path = '../../input/candidate/'
+datamart_path = '../../input/feature/'
+bpr_path = '../../input/preprocess/'
 
 main(bpr_path, candidate_path, datamart_path)
 

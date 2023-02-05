@@ -425,10 +425,11 @@ def main(raw_opt_path, preprocess_path, datamart_path, output_path, calc_recall)
                 print(calc_recall(target[target['type'] == f'{dict_}s'], pred_temp))
 
 
-raw_opt_path = '../../data/raw_opt/'
-preprocess_path = '../../data/val_radek/'
-datamart_path = '../../github/data/feature_used/'
-output_path = '../../github/data/candidate/'
+# path
+raw_opt_path = '../../input/train_test/'
+preprocess_path = '../../input/train_valid/'
+datamart_path = '../../input/feature/'
+output_path = '../../input/candidate/'
 calc_recall = False
 
 main(raw_opt_path, preprocess_path, datamart_path, output_path, calc_recall)

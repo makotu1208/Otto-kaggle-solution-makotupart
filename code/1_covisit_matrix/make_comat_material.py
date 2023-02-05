@@ -618,13 +618,7 @@ def main(raw_opt_path, preprocess_path, dm_save_path, w2v_path):
         same_aid_df.to_parquet(dm_save_path + prefix + 'same_aid_df.parquet')
 
 
-# +
-#raw_opt_path = '../../data/raw_opt/'
-#preprocess_path = '../../data/val_radek/'
-#dm_save_path = '../../output_intermediate/data/feature/'
-#w2v_path = '../../data/w2v_output/'
-# -
-
+# set path
 raw_opt_path = '../../input/train_test/'
 preprocess_path = '../../input/train_valid/'
 dm_save_path = '../../input/feature/'

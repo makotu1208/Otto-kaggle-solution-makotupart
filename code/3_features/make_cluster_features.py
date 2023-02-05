@@ -109,10 +109,10 @@ def main(cluster_path, raw_opt_path, preprocess_path, candidate_path, datamart_p
             gc.collect()
 
 
-raw_opt_path = '../../data/raw_opt/'
-preprocess_path = '../../data/val_radek/'
-candidate_path = '../../github/data/feature_used/'
-datamart_path = '../../output_intermediate/data/feature/'
-cluster_path = '../../data/datamart/'
+raw_opt_path = '../../input/train_test/'
+preprocess_path = '../../input/train_valid/'
+candidate_path = '../../input/candidate/'
+datamart_path = '../../input/feature/'
+cluster_path = '../../input/preprocess/'
 
 main(cluster_path, raw_opt_path, preprocess_path, candidate_path, datamart_path)

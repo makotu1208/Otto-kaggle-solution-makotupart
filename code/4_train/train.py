@@ -338,16 +338,16 @@ def main(type_name, candidate_path, datamart_path, oof_path, model_path,
     result_all.to_parquet(f'{oof_path}{type_name}_train_makotu_v3.parquet')
 
 
-candidate_path = '../../github/data/feature_used/'
-datamart_path ='../../github/data/feature_used/'
-oof_path = '../../data/oof/'
-model_path = '' # 変更必要あり
-feature_dict_path = '../config/feature_config.yaml'
-co_matrix_dict_path = '../config/co_matrix_config.yaml'
-oof_dict_path = '../config/oof_config.yaml'
+candidate_path = '../../input/candidate/'
+datamart_path = '../../input/feature/'
+oof_path = '../../input/oof/'
+model_path = '../../model/'
+feature_dict_path = '../../config/feature_config.yaml'
+co_matrix_dict_path = '../../config/co_matrix_config.yaml'
+oof_dict_path = '../../config/oof_config.yaml'
 
 for t in ['click', 'click_all', 'cart', 'order']:
-    main(t, candidate_path, datamart_path, oof_path, model_path, feature_dict_path, 
+    main(t, candidate_path, datamart_path, oof_path, model_path + t, feature_dict_path, 
          co_matrix_dict_path, oof_dict_path)
 
 

@@ -210,11 +210,11 @@ def main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path):
                                  chunk_size = 10000)
             gc.collect()
 
-raw_opt_path = '../../data/raw_opt/'
-preprocess_path = '../../data/val_radek/'
-w2v_path = '../../data/w2v_output/'
-candidate_path = '../../github/data/feature_used/'
-output_path = '../../github/data/feature/'
+raw_opt_path = '../../input/train_test/'
+preprocess_path = '../../input/train_valid/'
+w2v_path = '../../input/preprocess/'
+candidate_path = '../../input/candidate/'
+output_path = '../../input/feature/'
 
 main(raw_opt_path, 
      preprocess_path, 
