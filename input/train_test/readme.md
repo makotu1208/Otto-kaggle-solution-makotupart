@@ -1,0 +1,1 @@
+Use radek's dataset: https://www.kaggle.com/datasets/radek1/otto-full-optimized-memory-footprint
