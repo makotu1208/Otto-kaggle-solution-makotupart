@@ -1,0 +1,18 @@
+test_cart:
+  click_test_makotu_v3.parquet: click_oof
+  click_test_makotu_v3_all_target.parquet: click_all_oof
+test_click: {}
+test_click_all: {}
+test_order:
+  cart_test_makotu_v3.parquet: cart_oof
+  click_test_makotu_v3.parquet: click_oof
+  click_test_makotu_v3_all_target.parquet: click_all_oof
+train_cart:
+  click_train_makotu_v3.parquet: click_oof
+  click_train_makotu_v3_all_target.parquet: click_all_oof
+train_click: {}
+train_click_all: {}
+train_order:
+  cart_train_makotu_v3.parquet: cart_oof
+  click_train_makotu_v3.parquet: click_oof
+  click_train_makotu_v3_all_target.parquet: click_all_oof
