@@ -19,7 +19,7 @@ https://www.kaggle.com/datasets/radek1/otto-full-optimized-memory-footprint
 https://www.kaggle.com/datasets/radek1/otto-train-and-test-data-for-local-validation  
 First put these data into "input/train_test" and "input/train_valid" before executing.
 
-## environment
+## Environment
 GPU memory: 24GB(RTX 3090)  
 CPU memory: 128GB  
 The system will work in the following environment.  
