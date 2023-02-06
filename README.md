@@ -2,7 +2,7 @@
  My solution, which was in (imaginary) third place at the end of the competition, is now available to the public.
 
 ## Solution Overview
-Makotu part of this URL for solutions.
+Makotu part of this URL for solutions.  
 https://www.kaggle.com/competitions/otto-recommender-system/discussion/382879
 
 ## Code
