@@ -1,5 +1,5 @@
 # kaggle: otto-Multi-Objective Recommender System
- My solution, which was in third place at the end of the competition, is now available to the public.
+ My solution, which was in (imaginary) third place at the end of the competition, is now available to the public.
 
 ## Solution Overview
 Makotu part of this URL for solutions.
@@ -20,7 +20,7 @@ https://www.kaggle.com/datasets/radek1/otto-train-and-test-data-for-local-valida
 First put these data into "input/train_test" and "input/train_valid" before executing.
 
 ## environment
-GPU is RTX3090 (24GB memory)  
-CPU with 128GB memory  
+GPU memory: 24GB(RTX 3090)
+CPU memory: 128GB
 The system will work in the following environment.  
 If you have less than that, it will probably stop working in places, so please adjust the code accordingly.
