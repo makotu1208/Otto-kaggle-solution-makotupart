@@ -1,5 +1,5 @@
 # kaggle: otto-Multi-Objective Recommender System
- My solution, which was in (imaginary) third place at the end of the competition, is now available to the public.
+ My solution, which was in third place at the end of the competition, is now available to the public.
 
 ## Solution Overview
 Makotu part of this URL for solutions.  
