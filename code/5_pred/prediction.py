@@ -1,7 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
@@ -53,7 +53,7 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
     FEATURES = feature_config[f'test_{type_name}']
     co_matrix_list = co_matrix_config[f'test_{type_name}']
     oof_dict = oof_config[f'test_{type_name}']
-    model_path = [model_path + i for i in os.listdir(model_path) if 'cbm' in i]
+    model_path = [model_path + '/' + i for i in os.listdir(model_path) if 'cbm' in i]
     print(model_path)
     
     train_all = pd.read_parquet(candidate_path + 'test_' + type_name + '_candidate.parquet')
@@ -63,7 +63,7 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
     print(len(test_session_list))
     chunk_size = 335000 # 280000
     chunk_num = int((len(test_session_list) / chunk_size) + 1)
-    aug_data = pd.read_parquet('../../data/datamart/' + prefix + 'order_aug_session.parquet')        
+    #aug_data = pd.read_parquet('../../data/datamart/' + prefix + 'order_aug_session.parquet')        
 
     print(chunk_num)
     
@@ -298,9 +298,3 @@ oof_dict_path = '../../config/oof_config.yaml'
 for t in ['click', 'click_all', 'cart', 'order']:
     main(t, model_path + t, candidate_path, datamart_path, oof_read_path, output_path,
          feature_dict_path, co_matrix_dict_path, oof_dict_path)
-
-
-
-
-
-
