@@ -19,6 +19,21 @@ https://www.kaggle.com/datasets/radek1/otto-full-optimized-memory-footprint
 https://www.kaggle.com/datasets/radek1/otto-train-and-test-data-for-local-validation  
 First put these data into "input/train_test" and "input/train_valid" before executing.
 
+## Model
+https://www.kaggle.com/datasets/mhyodo/otto-makotu-models
+
+## for prediction
+To reproduce the inference, take the following steps
+1. store the original data in the input folder train_test and train_valid (please read the readme for those folders)
+2. run code folder from 0-3 (up to 3_features)
+3. store the above trained models in each model in the model folder
+4. run prediction.py in 5 of the code folder
+
+## for train
+1. store the original data in the input folder train_test and train_valid (please read the readme for those folders)
+2. run code folder from 0-3 (up to 3_features)
+3. run train.py in 4 of the code folder
+
 ## Environment
 GPU memory: 24GB(RTX 3090)  
 CPU memory: 128GB  
