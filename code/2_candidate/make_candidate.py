@@ -1,7 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
@@ -264,165 +264,163 @@ def main(raw_opt_path, preprocess_path, datamart_path, output_path):
                 print(calc_recall(target[target['type'] == f'{dict_}s'], pred_temp))
 
 
-def main(raw_opt_path, preprocess_path, datamart_path, output_path, calc_recall):
-    
-    for dict_ in ['order', 'cart', 'click', 'click_all']:
-        
-        print(dict_)
+def main(raw_opt_path, dict_, preprocess_path, datamart_path, output_path, calc_recall):
 
-        for prefix in ['train_', 'test_']:
+    for prefix in ['train_', 'test_']:
 
-            # 0.8082842 3.40億
-            order_dict = {
-                prefix + 'click_click_allterm_last.parquet': [None, 100],
-                prefix + 'click_click_allterm_top.parquet': [None, 20],
-                prefix + 'click_click_allterm_hour.parquet': [None, 100],
-                prefix + 'click_click_allterm_day.parquet': [None, 30],
+        # 0.8082842 3.40億
+        order_dict = {
+            prefix + 'click_click_allterm_last.parquet': [None, 100],
+            prefix + 'click_click_allterm_top.parquet': [None, 20],
+            prefix + 'click_click_allterm_hour.parquet': [None, 100],
+            prefix + 'click_click_allterm_day.parquet': [None, 30],
 
-                prefix + 'click_buy_allterm_last.parquet': [None, 40],
-                prefix + 'click_buy_allterm_top.parquet': [None, 40],
-                prefix + 'click_buy_allterm_hour.parquet': [None, 40],
-                prefix + 'click_buy_allterm_day.parquet': [None, 10],
+            prefix + 'click_buy_allterm_last.parquet': [None, 40],
+            prefix + 'click_buy_allterm_top.parquet': [None, 40],
+            prefix + 'click_buy_allterm_hour.parquet': [None, 40],
+            prefix + 'click_buy_allterm_day.parquet': [None, 10],
 
-                prefix + 'buy_click_allterm_all.parquet': [None, 40],
-                prefix + 'buy_buy_allterm_all.parquet': [None, 40],
+            prefix + 'buy_click_allterm_all.parquet': [None, 40],
+            prefix + 'buy_buy_allterm_all.parquet': [None, 40],
 
-                prefix + 'click_click_dup_last.parquet': [None, 20],
-                prefix + 'click_click_dup_top.parquet': [None, 10],
-                prefix + 'click_click_dup_hour.parquet': [None, 20],
+            prefix + 'click_click_dup_last.parquet': [None, 20],
+            prefix + 'click_click_dup_top.parquet': [None, 10],
+            prefix + 'click_click_dup_hour.parquet': [None, 20],
 
-                prefix + 'click_buy_dup_last.parquet': [None, 20],
-                prefix + 'click_buy_dup_top.parquet': [None, 10],
-                prefix + 'click_buy_dup_hour.parquet': [None, 20],
-                prefix + 'buy_click_dup_all.parquet': [None, 20],
-                prefix + 'buy_buy_dup_all.parquet': [None, 20],
+            prefix + 'click_buy_dup_last.parquet': [None, 20],
+            prefix + 'click_buy_dup_top.parquet': [None, 10],
+            prefix + 'click_buy_dup_hour.parquet': [None, 20],
+            prefix + 'buy_click_dup_all.parquet': [None, 20],
+            prefix + 'buy_buy_dup_all.parquet': [None, 20],
 
-                prefix + 'click_click_dup_wlen_last.parquet': [None, 20],
-                prefix + 'click_click_dup_wlen_hour.parquet': [None, 20],
-                prefix + 'click_buy_dup_wlen_last.parquet': [None, 20],
-                prefix + 'click_buy_dup_wlen_hour.parquet': [None, 20],
+            prefix + 'click_click_dup_wlen_last.parquet': [None, 20],
+            prefix + 'click_click_dup_wlen_hour.parquet': [None, 20],
+            prefix + 'click_buy_dup_wlen_last.parquet': [None, 20],
+            prefix + 'click_buy_dup_wlen_hour.parquet': [None, 20],
 
-                prefix + 'click_click_base_last.parquet': [None, 50],
-                prefix + 'click_click_base_top.parquet': [None, 10],
-                prefix + 'click_click_base_hour.parquet': [None, 50],
-                prefix + 'buy_click_base_all.parquet': [None, 40],
-                prefix + 'buy_buy_base_all.parquet': [None, 40],
+            prefix + 'click_click_base_last.parquet': [None, 50],
+            prefix + 'click_click_base_top.parquet': [None, 10],
+            prefix + 'click_click_base_hour.parquet': [None, 50],
+            prefix + 'buy_click_base_all.parquet': [None, 40],
+            prefix + 'buy_buy_base_all.parquet': [None, 40],
 
-                prefix + 'click_click_base_wlen_last.parquet': [None, 40],
-                prefix + 'click_click_base_wlen_top.parquet': [None, 10],
-                prefix + 'click_click_base_wlen_hour.parquet': [None, 30],
-                prefix + 'buy_click_base_wlen_all.parquet': [None, 20],
-                prefix + 'buy_buy_base_wlen_all.parquet': [None, 20],
+            prefix + 'click_click_base_wlen_last.parquet': [None, 40],
+            prefix + 'click_click_base_wlen_top.parquet': [None, 10],
+            prefix + 'click_click_base_wlen_hour.parquet': [None, 30],
+            prefix + 'buy_click_base_wlen_all.parquet': [None, 20],
+            prefix + 'buy_buy_base_wlen_all.parquet': [None, 20],
 
-                prefix + 'click_click_base_hour_last.parquet': [None, 15],
-                prefix + 'click_click_base_hour_hour.parquet': [None, 15],
-                prefix + 'click_click_dup_hour_last.parquet': [None, 5],
-                prefix + 'click_click_dup_hour_hour.parquet': [None, 5],
-            }
+            prefix + 'click_click_base_hour_last.parquet': [None, 15],
+            prefix + 'click_click_base_hour_hour.parquet': [None, 15],
+            prefix + 'click_click_dup_hour_last.parquet': [None, 5],
+            prefix + 'click_click_dup_hour_hour.parquet': [None, 5],
+        }
 
-            ## 0.678994976 3.40億
-            cart_dict = order_dict.copy()
+        ## 0.678994976 3.40億
+        cart_dict = order_dict.copy()
 
-            ## 0.6826327 2.73億
-            click_dict = {
-                prefix + 'click_click_dup_wlen_last.parquet': [None, 70],
-                prefix + 'click_click_dup_wlen_hour.parquet': [None, 50],
-                prefix + 'click_click_dup_wlen_day.parquet': [None, 10],
+        ## 0.6826327 2.73億
+        click_dict = {
+            prefix + 'click_click_dup_wlen_last.parquet': [None, 70],
+            prefix + 'click_click_dup_wlen_hour.parquet': [None, 50],
+            prefix + 'click_click_dup_wlen_day.parquet': [None, 10],
 
-                prefix + 'click_click_base_hour_last.parquet': [None, 90],
-                prefix + 'click_click_base_hour_top.parquet': [None, 5],
-                prefix + 'click_click_base_hour_hour.parquet': [None, 60],
-                prefix + 'click_click_base_hour_day.parquet': [None, 20],
+            prefix + 'click_click_base_hour_last.parquet': [None, 90],
+            prefix + 'click_click_base_hour_top.parquet': [None, 5],
+            prefix + 'click_click_base_hour_hour.parquet': [None, 60],
+            prefix + 'click_click_base_hour_day.parquet': [None, 20],
 
-                prefix + 'click_click_dup_hour_last.parquet': [None, 30],
-                prefix + 'click_click_dup_hour_hour.parquet': [None, 30],
+            prefix + 'click_click_dup_hour_last.parquet': [None, 30],
+            prefix + 'click_click_dup_hour_hour.parquet': [None, 30],
 
-                prefix + 'click_click_base_last.parquet': [None, 30],
-                prefix + 'click_click_base_top.parquet': [None, 5],
-                prefix + 'click_click_base_hour.parquet': [None, 30],
-                prefix + 'click_click_base_day.parquet': [None, 10],
+            prefix + 'click_click_base_last.parquet': [None, 30],
+            prefix + 'click_click_base_top.parquet': [None, 5],
+            prefix + 'click_click_base_hour.parquet': [None, 30],
+            prefix + 'click_click_base_day.parquet': [None, 10],
 
-                prefix + 'click_click_allterm_last.parquet': [None, 30],
-                prefix + 'click_click_allterm_top.parquet': [None, 5],
-                prefix + 'click_click_allterm_hour.parquet': [None, 30],
-                prefix + 'click_click_allterm_day.parquet': [None, 10],
+            prefix + 'click_click_allterm_last.parquet': [None, 30],
+            prefix + 'click_click_allterm_top.parquet': [None, 5],
+            prefix + 'click_click_allterm_hour.parquet': [None, 30],
+            prefix + 'click_click_allterm_day.parquet': [None, 10],
 
-                prefix + 'click_click_dup_last.parquet': [None, 30],
-                prefix + 'click_click_dup_top.parquet': [None, 5],
-                prefix + 'click_click_dup_hour.parquet': [None, 30],
-                prefix + 'click_click_dup_day.parquet': [None, 10],
+            prefix + 'click_click_dup_last.parquet': [None, 30],
+            prefix + 'click_click_dup_top.parquet': [None, 5],
+            prefix + 'click_click_dup_hour.parquet': [None, 30],
+            prefix + 'click_click_dup_day.parquet': [None, 10],
 
-                prefix + 'click_click_w2v_last_w2v.parquet': [None, 10],
-                prefix + 'click_click_w2v_hour_w2v.parquet': [None, 5],
-            }
+            prefix + 'click_click_w2v_last_w2v.parquet': [None, 10],
+            prefix + 'click_click_w2v_hour_w2v.parquet': [None, 5],
+        }
 
-            if prefix == 'test_':
-                train = pd.read_parquet(raw_opt_path + 'test.parquet')
-            else:
-                train = pd.read_parquet(preprocess_path + 'test.parquet')
+        if prefix == 'test_':
+            train = pd.read_parquet(raw_opt_path + 'test.parquet')
+        else:
+            train = pd.read_parquet(preprocess_path + 'test.parquet')
 
-            hist_all = cudf.DataFrame(train[['session', 'aid']].value_counts().reset_index())
+        hist_all = cudf.DataFrame(train[['session', 'aid']].value_counts().reset_index())
 
-            if dict_ == 'order':
-                candidate_all = make_candidate_row(order_dict)
-            elif dict_ == 'cart':
-                candidate_all = make_candidate_row(cart_dict)
-            else:
-                candidate_all = make_candidate_row(click_dict)
+        if dict_ == 'order':
+            candidate_all = make_candidate_row(order_dict)
+        elif dict_ == 'cart':
+            candidate_all = make_candidate_row(cart_dict)
+        else:
+            candidate_all = make_candidate_row(click_dict)
 
-            gc.collect()
+        gc.collect()
 
-            candidate_all['session'] = candidate_all['session'].astype(np.int32)
-            candidate_all['aid'] = candidate_all['aid'].astype(np.int32)
-            candidate_all = candidate_all.merge(hist_all[['session', 'aid']], on = ['session', 'aid'], how = 'outer')
-            print(candidate_all.shape)
-            del hist_all
-            gc.collect()
+        candidate_all['session'] = candidate_all['session'].astype(np.int32)
+        candidate_all['aid'] = candidate_all['aid'].astype(np.int32)
+        candidate_all = candidate_all.merge(hist_all[['session', 'aid']], on = ['session', 'aid'], how = 'outer')
+        print(candidate_all.shape)
+        del hist_all
+        gc.collect()
 
-            if prefix == 'train_':
-                if dict_ != 'click_all':
-                    target = pd.read_parquet(preprocess_path + 'test_labels.parquet')
-                    target = target[target['type'] == f'{dict_}s']
+        if prefix == 'train_':
+            if dict_ != 'click_all':
+                target = pd.read_parquet(preprocess_path + 'test_labels.parquet')
+                target = target[target['type'] == f'{dict_}s']
 
-                    session_list = []
-                    aid_list = []
+                session_list = []
+                aid_list = []
 
-                    for row in tqdm(target.values):
-                        for t in row[2]:
-                            session_list.append(row[0])
-                            aid_list.append(t)
+                for row in tqdm(target.values):
+                    for t in row[2]:
+                        session_list.append(row[0])
+                        aid_list.append(t)
 
-                    target_df = pd.DataFrame(session_list, columns = ['session'])
-                    target_df['aid'] = aid_list
-                    target_df['target'] = 1
-                    target_df['target'] = target_df['target'].astype(np.int16)
-                    target_df = cudf.DataFrame(target_df)
+                target_df = pd.DataFrame(session_list, columns = ['session'])
+                target_df['aid'] = aid_list
+                target_df['target'] = 1
+                target_df['target'] = target_df['target'].astype(np.int16)
+                target_df = cudf.DataFrame(target_df)
 
-                    candidate_all = candidate_all.merge(target_df, on = ['session', 'aid'], how = 'left')
-                    candidate_all = candidate_all.sort_values(['session', 'aid']).reset_index(drop=True)
-                    candidate_all = candidate_all.to_pandas()
-                else:
-                    click_all_target = make_all_click_data(preprocess_path, raw_opt_path)
-                    candidate_all = candidate_all.merge(click_all_target, on = ['session', 'aid'], how = 'left')
-                    candidate_all = candidate_all.sort_values(['session', 'aid']).reset_index(drop=True)
-                    candidate_all = candidate_all.to_pandas()
-                    del click_all_target
-
-            else:
+                candidate_all = candidate_all.merge(target_df, on = ['session', 'aid'], how = 'left')
                 candidate_all = candidate_all.sort_values(['session', 'aid']).reset_index(drop=True)
                 candidate_all = candidate_all.to_pandas()
+            else:
+                click_all_target = make_all_click_data(preprocess_path, raw_opt_path)
+                candidate_all = candidate_all.merge(click_all_target, on = ['session', 'aid'], how = 'left')
+                candidate_all = candidate_all.sort_values(['session', 'aid']).reset_index(drop=True)
+                candidate_all = candidate_all.to_pandas()
+                del click_all_target
 
-            candidate_all.to_parquet(output_path + prefix + f'{dict_}_candidate.parquet')
+        else:
+            candidate_all = candidate_all.sort_values(['session', 'aid']).reset_index(drop=True)
+            candidate_all = candidate_all.to_pandas()
 
-            if calc_recall == True:
-                print('calc recall...')
-                pred_temp = candidate_all[['session', 'aid']].groupby('session')['aid'].apply(lambda x: " ".join(map(str,x)))
-                pred_temp = pred_temp.reset_index()
-                pred_temp.columns = ['session', 'labels']
+        candidate_all.to_parquet(output_path + prefix + f'{dict_}_candidate.parquet')
 
-                target['ground_truth'] = target.ground_truth.apply(lambda x: x[0].astype(str).split(' '))
-                pred_temp['labels'] = pred_temp[['labels']].apply(lambda x: x.str.split(' '))
-                print(calc_recall(target[target['type'] == f'{dict_}s'], pred_temp))
+        if calc_recall == True:
+            print('calc recall...')
+            pred_temp = candidate_all[['session', 'aid']].groupby('session')['aid'].apply(lambda x: " ".join(map(str,x)))
+            pred_temp = pred_temp.reset_index()
+            pred_temp.columns = ['session', 'labels']
+
+            target['ground_truth'] = target.ground_truth.apply(lambda x: x[0].astype(str).split(' '))
+            pred_temp['labels'] = pred_temp[['labels']].apply(lambda x: x.str.split(' '))
+            print(calc_recall(target[target['type'] == f'{dict_}s'], pred_temp))
+
+        gc.collect()
 
 
 # path
@@ -432,7 +430,12 @@ datamart_path = '../../input/feature/'
 output_path = '../../input/candidate/'
 calc_recall = False
 
-main(raw_opt_path, preprocess_path, datamart_path, output_path, calc_recall)
+main(raw_opt_path, 'order', preprocess_path, datamart_path, output_path, calc_recall)
+main(raw_opt_path, 'cart', preprocess_path, datamart_path, output_path, calc_recall)
+main(raw_opt_path, 'click', preprocess_path, datamart_path, output_path, calc_recall)
+main(raw_opt_path, 'click_all', preprocess_path, datamart_path, output_path, calc_recall)
+
+
 
 
 

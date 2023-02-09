@@ -1,7 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
@@ -154,61 +154,59 @@ def w2v_aid_dist_feature(prefix, train_action, w2v_path, candidate_path, output_
     gc.collect()
 
 
-def main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path):
+def main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path, candidate_file_name, prefix):
 
-    for prefix in ['train_', 'test_']:
+    #for prefix in ['train_', 'test_']:
 
-        print(prefix)
+    print(prefix)
 
-        if prefix == 'test_':
-            train = cudf.read_parquet(raw_opt_path + 'test.parquet')
-        else:
-            train = cudf.read_parquet(preprocess_path + 'test.parquet')
+    if prefix == 'test_':
+        train = cudf.read_parquet(raw_opt_path + 'test.parquet')
+    else:
+        train = cudf.read_parquet(preprocess_path + 'test.parquet')
 
+    print(candidate_file_name)
+    type_name = candidate_file_name.split('_')[0] + '_'
 
-        for candidate_file_name in ['click_candidate.parquet', 'cart_candidate.parquet', 'order_candidate.parquet']:
+    w2v_session_dist_feature(prefix, train, w2v_path, candidate_path, output_path, candidate_file_name, 
+                             w2v_file_name = 'w2v_output_16dims.parquet', 
+                             feature_name = 'session_w2v_dist_16dim', 
+                             save_name = prefix + type_name + 'session_w2v_dist_16dim',
+                             chunk_size = 15000)
+    w2v_session_dist_feature(prefix, train, w2v_path, candidate_path, output_path, candidate_file_name, 
+                             w2v_file_name = 'w2v_output_64dims.parquet', 
+                             feature_name = 'session_w2v_dist_64dim', 
+                             save_name = prefix + type_name + 'session_w2v_dist_64dim',
+                             chunk_size = 15000)
+    gc.collect()
 
-            print(candidate_file_name)
-            type_name = candidate_file_name.split('_')[0] + '_'
+    train_last_action, train_hour = make_action_data(train)
 
-            w2v_session_dist_feature(prefix, train, w2v_path, candidate_path, output_path, candidate_file_name, 
-                                     w2v_file_name = 'w2v_output_16dims.parquet', 
-                                     feature_name = 'session_w2v_dist_16dim', 
-                                     save_name = prefix + type_name + 'session_w2v_dist_16dim',
-                                     chunk_size = 15000)
-            w2v_session_dist_feature(prefix, train, w2v_path, candidate_path, output_path, candidate_file_name, 
-                                     w2v_file_name = 'w2v_output_64dims.parquet', 
-                                     feature_name = 'session_w2v_dist_64dim', 
-                                     save_name = prefix + type_name + 'session_w2v_dist_64dim',
-                                     chunk_size = 15000)
-            gc.collect()
+    w2v_aid_dist_feature(prefix, train_last_action, w2v_path, candidate_path, output_path, candidate_file_name, 
+                         w2v_file_name = 'w2v_output_16dims.parquet',
+                         feature_name = 'aid_w2v_last_dist_16dim', 
+                         save_name = prefix + type_name + 'aid_w2v_last_dist_16dim',
+                         chunk_size = 15000)
 
-            train_last_action, train_hour = make_action_data(train)
+    w2v_aid_dist_feature(prefix, train_last_action, w2v_path, candidate_path, output_path, candidate_file_name, 
+                         w2v_file_name = 'w2v_output_64dims.parquet',
+                         feature_name = 'aid_w2v_last_dist_64dim', 
+                         save_name = prefix + type_name + 'aid_w2v_last_dist_64dim',
+                         chunk_size = 15000)
 
-            w2v_aid_dist_feature(prefix, train_last_action, w2v_path, candidate_path, output_path, candidate_file_name, 
-                                 w2v_file_name = 'w2v_output_16dims.parquet',
-                                 feature_name = 'aid_w2v_last_dist_16dim', 
-                                 save_name = prefix + type_name + 'aid_w2v_last_dist_16dim',
-                                 chunk_size = 15000)
+    w2v_aid_dist_feature(prefix, train_hour, w2v_path, candidate_path, output_path, candidate_file_name, 
+                         w2v_file_name = 'w2v_output_16dims.parquet',
+                         feature_name = 'aid_w2v_hour_dist_16dim', 
+                         save_name = prefix + type_name + 'aid_w2v_hour_dist_16dim',
+                         chunk_size = 10000)
 
-            w2v_aid_dist_feature(prefix, train_last_action, w2v_path, candidate_path, output_path, candidate_file_name, 
-                                 w2v_file_name = 'w2v_output_64dims.parquet',
-                                 feature_name = 'aid_w2v_last_dist_64dim', 
-                                 save_name = prefix + type_name + 'aid_w2v_last_dist_64dim',
-                                 chunk_size = 15000)
+    w2v_aid_dist_feature(prefix, train_hour, w2v_path, candidate_path, output_path, candidate_file_name, 
+                         w2v_file_name = 'w2v_output_64dims.parquet',
+                         feature_name = 'aid_w2v_hour_dist_64dim', 
+                         save_name = prefix + type_name + 'aid_w2v_hour_dist_64dim',
+                         chunk_size = 10000)
+    gc.collect()
 
-            w2v_aid_dist_feature(prefix, train_hour, w2v_path, candidate_path, output_path, candidate_file_name, 
-                                 w2v_file_name = 'w2v_output_16dims.parquet',
-                                 feature_name = 'aid_w2v_hour_dist_16dim', 
-                                 save_name = prefix + type_name + 'aid_w2v_hour_dist_16dim',
-                                 chunk_size = 10000)
-
-            w2v_aid_dist_feature(prefix, train_hour, w2v_path, candidate_path, output_path, candidate_file_name, 
-                                 w2v_file_name = 'w2v_output_64dims.parquet',
-                                 feature_name = 'aid_w2v_hour_dist_64dim', 
-                                 save_name = prefix + type_name + 'aid_w2v_hour_dist_64dim',
-                                 chunk_size = 10000)
-            gc.collect()
 
 raw_opt_path = '../../input/train_test/'
 preprocess_path = '../../input/train_valid/'
@@ -216,11 +214,14 @@ w2v_path = '../../input/preprocess/'
 candidate_path = '../../input/candidate/'
 output_path = '../../input/feature/'
 
-main(raw_opt_path, 
-     preprocess_path, 
-     w2v_path, 
-     candidate_path, 
-     output_path
-    )
+# +
+main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path, 'click_candidate.parquet', 'train_')
+main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path, 'cart_candidate.parquet', 'train_')
+main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path, 'order_candidate.parquet', 'train_')
+
+main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path, 'click_candidate.parquet', 'test_')
+main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path, 'cart_candidate.parquet', 'test_')
+main(raw_opt_path, preprocess_path, w2v_path, candidate_path, output_path, 'order_candidate.parquet', 'test_')
+# -
 
 

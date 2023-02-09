@@ -1,7 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
@@ -498,7 +498,7 @@ def w2v_co_matrix(w2v_path):
 
 def main(raw_opt_path, preprocess_path, dm_save_path, w2v_path):
     
-    for train_or_test in ['train', 'test']:
+    for train_or_test in ['test', 'train']:
         
         print('start:', train_or_test)
     
