@@ -51,6 +51,11 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
         oof_config = yaml.safe_load(yml)
         
     FEATURES = feature_config[f'test_{type_name}']
+    FEATURES += ['bigram_normed_clicks_sum', 'bigram_normed_clicks_mean',
+           'bigram_normed_clicks_max', 'bigram_normed_clicks_min',
+           'bigram_normed_clicks_last', 'bigram_normed_carts_sum',
+           'bigram_normed_carts_mean', 'bigram_normed_carts_max',
+           'bigram_normed_carts_min', 'bigram_normed_carts_last']
     co_matrix_list = co_matrix_config[f'test_{type_name}']
     oof_dict = oof_config[f'test_{type_name}']
     model_path = [model_path + '/' + i for i in os.listdir(model_path) if 'cbm' in i]
@@ -61,10 +66,14 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
     
     test_session_list = list(train_all['session'].unique())
     print(len(test_session_list))
-    chunk_size = 335000 # 280000
+    chunk_size = 280000 # 280000
     chunk_num = int((len(test_session_list) / chunk_size) + 1)
-    #aug_data = pd.read_parquet('../../data/datamart/' + prefix + 'order_aug_session.parquet')        
-
+    
+    if type_name == 'click_all':
+        feature_type_name = 'click'
+    else:
+        feature_type_name = type_name
+    
     print(chunk_num)
     
     pred_all = []
@@ -87,6 +96,15 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
         del train_all
         gc.collect()
         
+        print('bigram features...')
+        bigram_df = pl.read_parquet(datamart_path + prefix + 'bigram_feature.parquet')
+        if '__index_level_0__' in list(bigram_df.columns):
+            print('drop')
+            bigram_df = bigram_df.drop(['__index_level_0__'])
+        test_chunk = test_chunk.join(bigram_df, on=['aid', 'session'], how="left")
+        del bigram_df
+        gc.collect()
+        
         print('oof features...')
         for oof_file_name in oof_dict.keys():
             print(oof_file_name)
@@ -96,7 +114,7 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
             test_chunk = test_chunk.join(oof, on=['aid', 'session'], how="left")
         
         print('BPR features...')
-        bpr_df = pl.read_parquet(datamart_path + prefix + type_name + '__bpr_feature.parquet')
+        bpr_df = pl.read_parquet(datamart_path + prefix + feature_type_name + '__bpr_feature.parquet')
         if 'target' in list(bpr_df.columns):
             print('drop')
             bpr_df = bpr_df.drop(['target'])
@@ -110,7 +128,7 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
 
         for mat_name in cos_sim_list:
             print(mat_name)
-            cos_sim_last_df = pl.read_parquet(datamart_path + prefix + type_name + '_' + mat_name)
+            cos_sim_last_df = pl.read_parquet(datamart_path + prefix + feature_type_name + '_' + mat_name)
             if '__index_level_0__' in list(cos_sim_last_df.columns):
                 print('drop')
                 cos_sim_last_df = cos_sim_last_df.drop(['__index_level_0__'])
@@ -150,7 +168,7 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
         
         print('cluster features...')
         # cluster features
-        cluster_prob_df = pl.read_parquet(datamart_path + prefix + type_name + '_cluster_trans_prob.parquet')
+        cluster_prob_df = pl.read_parquet(datamart_path + prefix + feature_type_name + '_cluster_trans_prob.parquet')
         cluster_prob_df = cluster_prob_df.filter(pl.col("session").is_in(test_chunk_session))
 
         use_cols = [i for i in list(cluster_prob_df.columns) if i in FEATURES]
@@ -282,19 +300,18 @@ def main(type_name, model_path, candidate_path, datamart_path, oof_read_path, ou
     pred_all['pred'] = pred_all['pred'].astype(np.float32)
     
     # save
-    pred_all.to_parquet(f'{output_path}{type_name}_test_makotu_v3.parquet')
+    pred_all.to_parquet(f'{output_path}{type_name}_test_makotu_v4.parquet')
 
 # +
 candidate_path = '../../input/candidate/'
 datamart_path ='../../input/feature/'
-oof_read_path = '../../input/oof/'
+oof_read_path = '../../output/'
 output_path = '../../output/'
-model_path = '../../model/'
+model_path = '../../model_v4/'
 feature_dict_path = '../../config/feature_config.yaml'
 co_matrix_dict_path = '../../config/co_matrix_config.yaml'
 oof_dict_path = '../../config/oof_config.yaml'
 
-
-for t in ['click', 'click_all', 'cart', 'order']:
+for t in ['cart', 'order']:
     main(t, model_path + t, candidate_path, datamart_path, oof_read_path, output_path,
          feature_dict_path, co_matrix_dict_path, oof_dict_path)

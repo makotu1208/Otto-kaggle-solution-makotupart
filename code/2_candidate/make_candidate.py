@@ -28,6 +28,7 @@ cudf.set_option("default_integer_bitwidth", 32)
 cudf.set_option("default_float_bitwidth", 32)
 
 
+
 def make_all_click_data(preprocess_path, raw_opt_path):
 
     train = cudf.read_parquet(preprocess_path + 'train.parquet')

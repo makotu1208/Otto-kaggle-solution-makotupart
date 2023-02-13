@@ -1,7 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
@@ -62,9 +62,23 @@ def join_features(test_chunk, type_name, datamart_path, oof_path, oof_dict, co_m
     
     prefix = 'train_'
     
+    if type_name == 'click_all':
+        feature_type_name = 'click'
+    else:
+        feature_type_name = type_name
+    
     test_chunk = test_chunk.with_column(pl.col(['session','aid']).cast(pl.Int32))
     test_chunk_session = list(test_chunk['session'].unique().to_pandas())
     test_chunk_aids = list(test_chunk['aid'].unique().to_pandas())
+    
+    print('bigram features...')
+    bigram_df = pl.read_parquet(datamart_path + prefix + 'bigram_feature.parquet')
+    if '__index_level_0__' in list(bigram_df.columns):
+        print('drop')
+        bigram_df = bigram_df.drop(['__index_level_0__'])
+    test_chunk = test_chunk.join(bigram_df, on=['aid', 'session'], how="left")
+    del bigram_df
+    gc.collect()
     
     print('oof features...')
     for oof_file_name in oof_dict.keys():
@@ -75,7 +89,7 @@ def join_features(test_chunk, type_name, datamart_path, oof_path, oof_dict, co_m
         test_chunk = test_chunk.join(oof, on=['aid', 'session'], how="left")
         
     print('BPR features...')
-    bpr_df = pl.read_parquet(datamart_path + prefix + type_name + '__bpr_feature.parquet')
+    bpr_df = pl.read_parquet(datamart_path + prefix + feature_type_name + '__bpr_feature.parquet')
     bpr_df = bpr_df.drop(['target'])
     bpr_df = bpr_df.with_column(pl.col(pl.Int64).cast(pl.Int32, strict=False))
     test_chunk = test_chunk.join(bpr_df, on=['aid', 'session'], how="left")
@@ -87,7 +101,7 @@ def join_features(test_chunk, type_name, datamart_path, oof_path, oof_dict, co_m
 
     for mat_name in cos_sim_list:
         print(mat_name)
-        cos_sim_last_df = pl.read_parquet(datamart_path + prefix + type_name + '_' + mat_name)
+        cos_sim_last_df = pl.read_parquet(datamart_path + prefix + feature_type_name + '_' + mat_name)
         if '__index_level_0__' in list(cos_sim_last_df.columns):
             print('drop')
             cos_sim_last_df = cos_sim_last_df.drop(['__index_level_0__'])
@@ -129,7 +143,7 @@ def join_features(test_chunk, type_name, datamart_path, oof_path, oof_dict, co_m
         
     print('cluster features...')
     # cluster features
-    cluster_prob_df = pl.read_parquet(datamart_path + prefix + type_name + '_cluster_trans_prob.parquet')
+    cluster_prob_df = pl.read_parquet(datamart_path + prefix + feature_type_name + '_cluster_trans_prob.parquet')
     cluster_prob_df = cluster_prob_df.filter(pl.col("session").is_in(test_chunk_session))
 
     use_cols = [i for i in list(cluster_prob_df.columns) if i in FEATURES]
@@ -252,6 +266,11 @@ def main(type_name, candidate_path, datamart_path, oof_path, model_path,
         oof_config = yaml.safe_load(yml)
         
     FEATURES = feature_config[f'train_{type_name}']
+    FEATURES += ['bigram_normed_clicks_sum', 'bigram_normed_clicks_mean',
+       'bigram_normed_clicks_max', 'bigram_normed_clicks_min',
+       'bigram_normed_clicks_last', 'bigram_normed_carts_sum',
+       'bigram_normed_carts_mean', 'bigram_normed_carts_max',
+       'bigram_normed_carts_min', 'bigram_normed_carts_last'] # add v4
     co_matrix_list = co_matrix_config[f'train_{type_name}']
     oof_dict = oof_config[f'train_{type_name}']
     
@@ -266,8 +285,8 @@ def main(type_name, candidate_path, datamart_path, oof_path, model_path,
     param = {'loss_function':'PairLogitPairwise', 
              'learning_rate': .05, 
              'custom_metric': 'RecallAt:top=20',
-             'iterations': 100000,
-             #'iterations': 50,
+             #'iterations': 100000,
+             'iterations': 50,
              'depth': 7, 
              'use_best_model':True,
              'task_type': 'GPU', 
@@ -309,7 +328,7 @@ def main(type_name, candidate_path, datamart_path, oof_path, model_path,
         print('training...')
         ranker = CatBoostRanker(**param)
         ranker.fit(X_train, eval_set=X_valid)
-        ranker.save_model(model_path + f'CB_fold{fold}_{type_name}.cbm', 
+        ranker.save_model(model_path + '/' + f'CB_fold{fold}_{type_name}_samp.cbm', 
                           format="cbm", export_parameters=None, pool=None)
         del X_train, X_valid
         gc.collect()
@@ -334,19 +353,23 @@ def main(type_name, candidate_path, datamart_path, oof_path, model_path,
 
         del valid_all
         gc.collect()
-
-    result_all.to_parquet(f'{oof_path}{type_name}_train_makotu_v3.parquet')
+        
+    # save
+    if type_name != 'click_all':
+        result_all.to_parquet(f'{oof_path}{type_name}_train_makotu_v4.parquet')
+    else:
+        result_all.to_parquet(f'{oof_path}click_train_makotu_v4_all_target.parquet')
 
 
 candidate_path = '../../input/candidate/'
 datamart_path = '../../input/feature/'
 oof_path = '../../input/oof/'
-model_path = '../../model/'
+model_path = '../../model_v4/'
 feature_dict_path = '../../config/feature_config.yaml'
 co_matrix_dict_path = '../../config/co_matrix_config.yaml'
 oof_dict_path = '../../config/oof_config.yaml'
 
-for t in ['click', 'click_all', 'cart', 'order']:
+for t in ['cart', 'order']:
     main(t, candidate_path, datamart_path, oof_path, model_path + t, feature_dict_path, 
          co_matrix_dict_path, oof_dict_path)
 
